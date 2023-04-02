@@ -1,38 +1,59 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <unistd.h>
 
 #define MAX_SIZE 65
-#define MIN_NUM 33
-#define MAX_NUM 126
+#define MIN_CHAR 33
+#define MAX_CHAR 126
 
-int GetRondom(int min, int max);
+int getRandomChar(int min, int max);
 
 int main(int argc, char *argv[]){
-	char words[MAX_SIZE];
+	int passlen = MAX_SIZE - 1;
+	int opt;
+	while ((opt = getopt(argc, argv, "l:n")) != -1) {
+		switch (opt) {
+			case 'l':
+				if (atoi(optarg) == 0 || atoi(optarg) >= MAX_SIZE) {
+					fprintf(stderr, "Error: Invaliid password length.\n");
+					return 1;
+				}
+				passlen = atoi(optarg);
+				break;
+			case 'n':
+				exit(0);
+			default:
+				fprintf(stderr, "invalid option\n");
+				return 1;
+		}
+	}
+
+	char *words = (char*) malloc((passlen + 1) * sizeof(char));
+	if(words == NULL){
+		fprintf(stderr, "Error: Memory allocation failed.\n");
+		return 1;
+	}
 
 	time_t t;
 	srandom(time(&t));
-		
 	int i;
-	for(i = 0; i < MAX_SIZE; i++){
-		words[i] = GetRondom(MIN_NUM, MAX_NUM);
-		if(words[i] == 92){
+	for(i = 0; i < passlen; i++){
+		int c = getRandomChar(MIN_CHAR, MAX_CHAR);	
+		if(c == '\\'){
 			i--;	
+		} else {
+			words[i] = (char)c;
 		}
 	}
-	words[65] = '\0';
-
+	words[passlen] = '\0';
 	printf("%s\n", words);
-
+	free(words);
 	return 0;
 }
 
 
-int GetRondom(int min, int max){
-	int num =0;
-	time_t t;
-	num = (int)((double)random() * (max + 1 - min) / (double)RAND_MAX + min);
-
+int getRandomChar(int min, int max){
+	int num = (int)((double)random() * (max + 1 - min) / (double)RAND_MAX + min);
 	return num;
 }
