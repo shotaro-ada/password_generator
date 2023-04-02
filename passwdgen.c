@@ -36,3 +36,6 @@ int GetRondom(int min, int max){
 
 	return num;
 }
+
+
+// アルゴリズムが未完成
