@@ -32,7 +32,7 @@ int main(int argc, char *argv[]){
 int GetRondom(int min, int max){
 	int num =0;
 	time_t t;
-	num = (int)((double)random() * (max + 1 - min) / (1 + (double)RAND_MAX));
+	num = (int)((double)random() * (max + 1 - min) / (double)RAND_MAX + min);
 
 	return num;
 }
